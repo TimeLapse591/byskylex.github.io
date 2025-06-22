@@ -3,114 +3,82 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Neon Chatbox</title>
+  <title>Socket.IO Chat</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/socket.io/socket.io.js"></script>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
+    .bubble {
+      max-width: 70%;
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
     }
-    .neon-glow {
-      text-shadow: 0 0 5px #00e0ff, 0 0 10px #00e0ff, 0 0 20px #00e0ff;
-    }
-    .bubble-left {
-      background: #2d2d2d;
-      color: #fff;
-    }
-    .bubble-right {
+    .bubble-user {
       background: #00e0ff;
       color: #000;
+      align-self: flex-end;
     }
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #888;
-      border-radius: 6px;
+    .bubble-bot {
+      background: #444;
+      color: #fff;
+      font-style: italic;
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-gray-900 to-black min-h-screen text-white">
-
-  <!-- Kullanıcı Adı Seçme Ekranı -->
-  <div id="login-screen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
-    <div class="bg-gray-800 p-6 rounded-xl shadow-xl text-center">
-      <h2 class="text-2xl font-bold neon-glow mb-4">💬 Chat'e Giriş</h2>
-      <input id="username-input" type="text" placeholder="Kullanıcı adınız" class="w-full px-4 py-2 rounded bg-gray-700 text-white mb-4 outline-none"/>
-      <button id="enter-chat" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded">Giriş Yap</button>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+  <!-- Kullanıcı adı giriş ekranı -->
+  <div id="login" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50">
+    <div class="bg-gray-800 p-6 rounded-xl text-center w-80">
+      <h2 class="text-xl font-bold mb-4">💬 Chat'e Giriş</h2>
+      <input id="username" type="text" placeholder="Kullanıcı adınız" class="w-full px-4 py-2 rounded bg-gray-700 text-white mb-4 outline-none"/>
+      <button id="start" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded">Giriş Yap</button>
     </div>
   </div>
 
-  <!-- Chatbox -->
-  <div class="flex h-screen">
-    <!-- Sidebar -->
-    <aside class="w-1/4 bg-gray-900 p-4 flex flex-col items-center border-r border-gray-700 hidden md:flex">
-      <div class="w-20 h-20 bg-blue-500 rounded-full mb-4 flex items-center justify-center text-3xl font-bold text-black">
-        👤
-      </div>
-      <div id="user-display" class="text-lg font-semibold neon-glow"></div>
-    </aside>
-
-    <!-- Chat Area -->
-    <main class="flex-1 p-4 flex flex-col">
-      <h1 class="text-2xl font-bold neon-glow mb-4 text-center">💬 Neon Chatbox</h1>
-      <ul id="messages" class="flex-1 overflow-y-auto space-y-2 px-2"></ul>
-      <form id="form" class="mt-4 flex gap-2">
-        <input id="input" type="text" autocomplete="off" placeholder="Mesajınızı yazın..." class="flex-1 px-4 py-2 rounded-xl bg-gray-800 text-white outline-none"/>
-        <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl">Gönder</button>
-      </form>
-    </main>
+  <!-- Chat alanı -->
+  <div class="w-full max-w-2xl h-screen flex flex-col p-4">
+    <div class="text-2xl font-bold mb-4 text-center">🌐 Ortak Chatbox</div>
+    <div id="chat" class="flex-1 overflow-y-auto space-y-2 flex flex-col p-2 border border-gray-700 rounded-xl bg-gray-800"></div>
+    <form id="form" class="mt-4 flex gap-2">
+      <input id="input" autocomplete="off" placeholder="Mesaj yaz..." class="flex-1 px-4 py-2 rounded bg-gray-700 text-white outline-none"/>
+      <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Gönder</button>
+    </form>
   </div>
 
-  <!-- Script -->
   <script>
-    const loginScreen = document.getElementById('login-screen');
-    const usernameInput = document.getElementById('username-input');
-    const enterButton = document.getElementById('enter-chat');
-    const userDisplay = document.getElementById('user-display');
+    const socket = io();
     const form = document.getElementById('form');
     const input = document.getElementById('input');
-    const messages = document.getElementById('messages');
+    const chat = document.getElementById('chat');
+    const login = document.getElementById('login');
+    const usernameInput = document.getElementById('username');
+    const startBtn = document.getElementById('start');
 
     let username = '';
 
-    enterButton.addEventListener('click', () => {
+    startBtn.onclick = () => {
       const name = usernameInput.value.trim();
-      if (name) {
-        username = name;
-        userDisplay.textContent = username;
-        loginScreen.classList.add('hidden');
-      }
-    });
+      if (!name) return;
+      username = name;
+      socket.emit('set username', username);
+      login.classList.add('hidden');
+    };
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const text = input.value.trim();
-      if (text) {
-        const li = document.createElement('li');
-        li.className = 'flex justify-end';
-        li.innerHTML = `
-          <div class="bubble-right px-4 py-2 rounded-xl max-w-[70%]">
-            <strong>${username}</strong><br/>${text}
-          </div>
-        `;
-        messages.appendChild(li);
-
-        // Simüle edilmiş cevap (bot)
-        setTimeout(() => {
-          const reply = document.createElement('li');
-          reply.className = 'flex justify-start';
-          reply.innerHTML = `
-            <div class="bubble-left px-4 py-2 rounded-xl max-w-[70%]">
-              <strong>Bot</strong><br/>Bu otomatik bir yanıttır 🤖
-            </div>
-          `;
-          messages.appendChild(reply);
-          messages.scrollTop = messages.scrollHeight;
-        }, 1000);
-
+      const msg = input.value.trim();
+      if (msg) {
+        socket.emit('chat message', msg);
         input.value = '';
-        messages.scrollTop = messages.scrollHeight;
       }
+    });
+
+    socket.on('chat message', (data) => {
+      const div = document.createElement('div');
+      div.className = 'bubble';
+      div.classList.add(data.user === username ? 'bubble-user self-end' : data.user === 'Bot' ? 'bubble-bot self-center' : 'bg-gray-700 self-start');
+      div.innerHTML = `<strong>${data.user}</strong><br>${data.text}`;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
     });
   </script>
 </body>

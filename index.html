@@ -1,173 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Mini Arena - Haritalı</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Statik Chatbox</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #1e1e2f;
-      color: white;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .container {
-      text-align: center;
-      width: 700px;
-      padding: 20px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    }
-
-    input[type="text"] {
-      padding: 10px;
-      width: 80%;
-      margin-bottom: 15px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-
-    button {
-      padding: 10px 20px;
-      background: #27ae60;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin: 5px;
-      transition: background 0.3s;
-    }
-
-    button:disabled {
-      background: #555;
-      cursor: not-allowed;
-    }
-
-    button:hover:not(:disabled) {
-      background: #2ecc71;
-    }
-
-    #map {
-      display: none;
-      margin-top: 20px;
-    }
-
-    .player {
-      background: rgba(255, 255, 255, 0.08);
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
-
-    .player p {
-      margin: 5px 0;
-    }
-
-    .dead {
-      text-decoration: line-through;
-      color: #ff4d4d;
-    }
-
-    canvas {
-      margin-top: 20px;
-      background: #2c3e50;
-      border: 2px solid #999;
-      border-radius: 10px;
+      font-family: system-ui, sans-serif;
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <div id="login">
-      <h2>Mini Arena Haritalı</h2>
-      <input type="text" id="nickname" placeholder="Ismini yaz...">
-      <br>
-      <button onclick="enterGame()">Başla</button>
-    </div>
-
-    <div id="map">
-      <h3>Map: just a little baseplate</h3>
-      <canvas id="gameMap" width="600" height="400"></canvas>
-      <div id="playerList"></div>
-    </div>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="w-full max-w-md p-4 bg-white rounded-2xl shadow-xl flex flex-col h-[80vh]">
+    <h1 class="text-xl font-bold text-center mb-4">💬 Statik Chatbox</h1>
+    <ul id="messages" class="flex-1 overflow-y-auto mb-2 space-y-2"></ul>
+    <form id="form" class="flex gap-2">
+      <input id="input" autocomplete="off" placeholder="Mesaj yaz..." class="flex-1 border rounded-xl px-4 py-2"/>
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600">Gönder</button>
+    </form>
   </div>
 
   <script>
-    const players = [];
-    let currentPlayer = "";
-    const cooldowns = {};
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
 
-    function enterGame() {
-      const name = document.getElementById("nickname").value.trim();
-      if (!name) return alert("Isim gir!");
-
-      currentPlayer = name;
-      const startX = Math.floor(Math.random() * 580);
-      const startY = Math.floor(Math.random() * 380);
-
-      players.push({ name, hp: 300, x: startX, y: startY });
-      updateMap();
-
-      document.getElementById("login").style.display = "none";
-      document.getElementById("map").style.display = "block";
-
-      setInterval(updateMap, 2000); // otomatik yenileme
-    }
-
-    function updateMap() {
-      const ctx = document.getElementById("gameMap").getContext("2d");
-      ctx.clearRect(0, 0, 600, 400);
-      ctx.fillStyle = '#34495e';
-      ctx.fillRect(0, 0, 600, 400);
-
-      players.forEach(p => {
-        ctx.fillStyle = p.name === currentPlayer ? 'lime' : (p.hp <= 0 ? 'red' : 'white');
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = 'white';
-        ctx.font = '12px sans-serif';
-        ctx.fillText(`${p.name} (${p.hp})`, p.x - 20, p.y - 15);
-      });
-
-      const list = document.getElementById("playerList");
-      list.innerHTML = "";
-
-      players.forEach((player, index) => {
-        const div = document.createElement("div");
-        div.className = "player";
-        const nameTag = document.createElement("p");
-        nameTag.textContent = `🧍 ${player.name} (HP: ${player.hp})`;
-        if (player.hp <= 0) nameTag.className = "dead";
-
-        const attackBtn = document.createElement("button");
-        attackBtn.textContent = "SALDIR";
-        attackBtn.disabled = player.name === currentPlayer || player.hp <= 0 || cooldowns[player.name];
-
-        attackBtn.onclick = () => {
-          player.hp -= 50;
-          if (player.hp < 0) player.hp = 0;
-          cooldowns[player.name] = true;
-          updateMap();
-          setTimeout(() => {
-            cooldowns[player.name] = false;
-            updateMap();
-          }, 3000); // 3 saniye cooldown
-        };
-
-        div.appendChild(nameTag);
-        div.appendChild(attackBtn);
-        list.appendChild(div);
-      });
-    }
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (text) {
+        const item = document.createElement('li');
+        item.textContent = text;
+        item.className = 'bg-blue-100 text-sm p-2 rounded-xl self-end text-right max-w-[75%] ml-auto';
+        messages.appendChild(item);
+        messages.scrollTop = messages.scrollHeight;
+        input.value = '';
+      }
+    });
   </script>
 </body>
 </html>

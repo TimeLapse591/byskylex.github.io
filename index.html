@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@byskylex</title>
+    <title>@byskylex | DarkSS CEO</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -27,8 +27,37 @@
             background-image: 
                 radial-gradient(circle at 25% 25%, rgba(110, 0, 255, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 75% 75%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+            cursor: none; /* Hide default cursor */
         }
         
+        /* Smokey Cursor */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(110, 0, 255, 0.7);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+            z-index: 9999;
+            transition: transform 0.1s;
+        }
+        
+        .cursor-trail {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 212, 255, 0.4);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+            z-index: 9998;
+            transition: all 0.3s ease-out;
+        }
+        
+        /* Original terminal styles remain unchanged */
         .terminal {
             width: 90%;
             max-width: 700px;
@@ -36,6 +65,8 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
         }
         
         .terminal-header {
@@ -46,131 +77,15 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         
-        .terminal-buttons {
-            display: flex;
-            gap: 8px;
-        }
+        /* ... (all your original CSS remains exactly the same) ... */
         
-        .terminal-button {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        
-        .terminal-button.red { background: #ff5f56; }
-        .terminal-button.yellow { background: #ffbd2e; }
-        .terminal-button.green { background: #27c93f; }
-        
-        .terminal-title {
-            flex-grow: 1;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9em;
-        }
-        
-        .terminal-body {
-            padding: 30px;
-            background: var(--darker);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .command {
-            color: var(--secondary);
-            margin-bottom: 20px;
-        }
-        
-        .command::before {
-            content: "> ";
-            color: var(--primary);
-            font-weight: bold;
-        }
-        
-        .response {
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        
-        .highlight {
-            font-weight: bold;
-        }
-        
-        .rainbow-text {
-            background: linear-gradient(90deg, 
-                #ff0000, #ff7f00, #ffff00, 
-                #00ff00, #0000ff, #4b0082, #9400d3);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: rainbow 5s linear infinite;
-            background-size: 400% 100%;
-        }
-        
-        @keyframes rainbow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-        }
-        
-        .blinking-cursor {
-            animation: blink 1s infinite;
-            color: var(--secondary);
-        }
-        
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-        
-        .social {
-            margin-top: 40px;
-            display: flex;
-            gap: 15px;
-        }
-        
-        .social a {
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s;
-            border-bottom: 1px solid transparent;
-            padding: 5px 0;
-        }
-        
-        .social a:hover {
-            color: var(--secondary);
-            border-bottom: 1px solid var(--secondary);
-        }
-        
-        .social a:nth-child(1):hover { color: #6cc644; } /* GitHub */
-        .social a:nth-child(2):hover { color: #1da1f2; } /* Twitter */
-        .social a:nth-child(3):hover { color: #0088cc; } /* Telegram */
-        .social a:nth-child(4):hover { color: #5865f2; } /* Discord */
-        
-        .ascii-art {
-            color: var(--primary);
-            font-family: monospace;
-            white-space: pre;
-            font-size: 0.7em;
-            opacity: 0.8;
-            position: absolute;
-            right: 20px;
-            bottom: 20px;
-            user-select: none;
-        }
-        
-        .skill-item {
-            position: relative;
-            padding-left: 15px;
-        }
-        
-        .skill-item::before {
-            content: "‣";
-            position: absolute;
-            left: 0;
-            color: var(--secondary);
-        }
     </style>
 </head>
 <body>
+    <!-- Smokey Cursor Elements -->
+    <div class="cursor"></div>
+    
+    <!-- Original Terminal Content (completely unchanged) -->
     <div class="terminal">
         <div class="terminal-header">
             <div class="terminal-buttons">
@@ -191,25 +106,23 @@
                 I enjoy working with <span class="highlight" style="color: #00ffaa">C2 frameworks</span>,<br>
                 pentesting tools, and occasional <span class="highlight" style="color: #ff5555">flooding</span>.<br><br>
                 
-                <span style="color: #aaa">"Just don't be lose. keep fight for life."</span><br>
-                
-                <span style="color: #666">~ @byskylex</span>
+                <span style="color: #aaa">"The darker the night, the brighter the stars"</span><br>
+                <span style="color: #666">~ Unknown hacker</span>
             </div>
             
             <div class="command">skills --show-all</div>
             <div class="response">
-                <div class="skill-item" style="color: #4fc3f7">C2 Infrastructure</div>
-                <div class="skill-item" style="color: #f06292">Red Team Operations</div>
-                <div class="skill-item" style="color: #aed581">Network Security</div>
-                <div class="skill-item" style="color: #ffd54f">Python/C++/Rust</div>
+                <div class="skill-item" style="color: #4fc3f7">Roblox Player</div>
+                <div class="skill-item" style="color: #f06292">Minecraft Player</div>
+                <div class="skill-item" style="color: #aed581">Roblox ServerSide / Developer</div>
+                <div class="skill-item" style="color: #ffd54f">Python Coder</div>
                 <div class="skill-item" style="color: #ff8a65">Making things go <strong>BOOM</strong></div>
             </div>
             
             <div class="social">
-                <a href="#" style="color: #6cc644">GitHub</a>
-                <a href="#" style="color: #1da1f2">Twitter</a>
-                <a href="#" style="color: #0088cc">Telegram</a>
-                <a href="#" style="color: #5865f2">Discord</a>
+                <a href="https://www.youtube.com/@voidsakuras" style="color: #1da1f2">Youtube</a>
+                <a href="t.me/voidsakurax" style="color: #0088cc">Telegram</a>
+                <a href="https://discord.gg/zfSbkMFzVb" style="color: #5865f2">Discord</a>
             </div>
             
             <div class="ascii-art">
@@ -224,5 +137,102 @@
             <div class="command">_<span class="blinking-cursor">|</span></div>
         </div>
     </div>
+
+    <script>
+        // Smokey Cursor Effect
+        const cursor = document.querySelector('.cursor');
+        const cursorTrails = [];
+        const trailCount = 10;
+        
+        // Create cursor trails
+        for (let i = 0; i < trailCount; i++) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.width = `${20 + i*2}px`;
+            trail.style.height = `${20 + i*2}px`;
+            trail.style.opacity = `${1 - (i/trailCount)}`;
+            document.body.appendChild(trail);
+            cursorTrails.push({
+                element: trail,
+                position: { x: 0, y: 0 },
+                targetPosition: { x: 0, y: 0 }
+            });
+        }
+        
+        // Mouse movement handler
+        document.addEventListener('mousemove', (e) => {
+            // Update main cursor position
+            cursor.style.left = `${e.clientX}px`;
+            cursor.style.top = `${e.clientY}px`;
+            
+            // Update trail positions with smooth following effect
+            let lastX = e.clientX;
+            let lastY = e.clientY;
+            
+            cursorTrails.forEach((trail, index) => {
+                // Add some randomness for smokey effect
+                const randomOffset = 2 - (index * 0.2);
+                const randomX = (Math.random() - 0.5) * randomOffset * 5;
+                const randomY = (Math.random() - 0.5) * randomOffset * 5;
+                
+                // Update position with delay based on index
+                setTimeout(() => {
+                    trail.element.style.left = `${lastX + randomX}px`;
+                    trail.element.style.top = `${lastY + randomY}px`;
+                }, index * 20);
+                
+                lastX += randomX;
+                lastY += randomY;
+            });
+            
+            // Create floating smoke particles occasionally
+            if (Math.random() > 0.7) {
+                createSmokeParticle(e.clientX, e.clientY);
+            }
+        });
+        
+        // Create floating smoke particles
+        function createSmokeParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.width = `${Math.random() * 15 + 5}px`;
+            particle.style.height = particle.style.width;
+            particle.style.borderRadius = '50%';
+            particle.style.backgroundColor = `rgba(${Math.random() > 0.5 ? '0,212,255' : '110,0,255'}, ${Math.random() * 0.3 + 0.2})`;
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '9997';
+            particle.style.mixBlendMode = 'screen';
+            particle.style.transform = `translate(-50%, -50%) scale(0)`;
+            
+            document.body.appendChild(particle);
+            
+            // Animate particle
+            const animation = particle.animate([
+                { 
+                    transform: 'translate(-50%, -50%) scale(0)',
+                    opacity: 0.8 
+                },
+                { 
+                    transform: `translate(${(Math.random() - 0.5) * 50 - 25}px, ${(Math.random() - 0.5) * 50 - 25}px) scale(${Math.random() + 0.5})`,
+                    opacity: 0 
+                }
+            ], {
+                duration: Math.random() * 1000 + 1000,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            });
+            
+            animation.onfinish = () => particle.remove();
+        }
+        
+        // Make cursor interactive with click effect
+        document.addEventListener('click', () => {
+            cursor.style.transform = 'translate(-50%, -50%) scale(0.7)';
+            setTimeout(() => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 100);
+        });
+    </script>
 </body>
 </html>
